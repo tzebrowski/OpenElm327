@@ -15,8 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 final class DefaultUnitRegistry implements UnitsRegistry {
 
-	private final Map<String, Unit> units = new HashMap<>();
+	private final Map<Object, Unit> units = new HashMap<>();
 	private final ObjectMapper objectMapper = new ObjectMapper();
+
+	@Override
+	public Unit findById(Long id) {
+		return units.get(id);
+	}
 
 	@Override
 	public Unit findByName(String name) {
@@ -32,10 +37,12 @@ final class DefaultUnitRegistry implements UnitsRegistry {
 				log.info("Load {} pid definitions", readValue.length);
 				for (var unit : readValue) {
 					units.put(unit.getName(), unit);
+					units.put(unit.getId(), unit);
 				}
 			}
 		} catch (IOException e) {
-			log.error("Failed to load definitin file", e);
+			log.error("Failed to load units configuration", e);
 		}
 	}
+
 }

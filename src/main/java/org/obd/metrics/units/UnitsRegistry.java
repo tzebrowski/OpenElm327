@@ -6,6 +6,8 @@ public interface UnitsRegistry {
 
 	Unit findByName(String name);
 
+	Unit findById(Long id);
+	
 	static UnitsRegistry instance() throws IOException {
 		var registry = new DefaultUnitRegistry();
 		try (var openStream = Thread.currentThread().getContextClassLoader().getResource("units.json").openStream()) {

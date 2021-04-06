@@ -9,21 +9,23 @@ import java.util.List;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.obd.metrics.codec.MetricsDecoder;
+import org.obd.metrics.units.UnitsRegistry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 final class DefaultRegistry implements PidRegistry {
 
 	private final MultiValuedMap<String, PidDefinition> definitions = new ArrayListValuedHashMap<>();
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final MetricsDecoder decoder = new MetricsDecoder();
+	private final UnitsRegistry unitsRegistry;
 	private String mode;
 
 	@Override
@@ -64,14 +66,15 @@ final class DefaultRegistry implements PidRegistry {
 			if (null == inputStream) {
 				log.error("Was not able to load pids configuration");
 			} else {
-				var readValue = objectMapper.readValue(inputStream, PidDefinition[].class);
-				log.info("Load {} pid definitions", readValue.length);
-				for (var pidDef : readValue) {
-					definitions.put(decoder.getPredictedAnswerCode(pidDef), pidDef);
-					definitions.put((pidDef.getMode() + pidDef.getPid()).toLowerCase(), pidDef);
-					definitions.put(toId(pidDef.getId()), pidDef);
+				var definitions = objectMapper.readValue(inputStream, PidDefinition[].class);
+				log.info("Load {} pid definitions", definitions.length);
+				
+				for (var pidDef : definitions) {
+					this.definitions.put(decoder.getPredictedAnswerCode(pidDef), pidDef);
+					this.definitions.put((pidDef.getMode() + pidDef.getPid()).toLowerCase(), pidDef);
+					this.definitions.put(toId(pidDef.getId()), pidDef);
 				}
-				this.mode = readValue[0].getMode();
+				this.mode = definitions[0].getMode();
 			}
 		} catch (IOException e) {
 			log.error("Failed to load pids configuration", e);

@@ -14,4 +14,13 @@ public class UnitsRegistryTest {
 		Assertions.assertThat(unit).isNotNull();
 		Assertions.assertThat(unit.getName()).isEqualTo("Temperature");
 	}
+	
+	
+	@Test
+	public void findByIdTest() throws IOException {
+		var instance = UnitsRegistry.instance();
+		Unit unit = instance.findById(1l);
+		Assertions.assertThat(unit).isNotNull();
+		Assertions.assertThat(unit.getName()).isEqualTo("Temperature");
+	}
 }

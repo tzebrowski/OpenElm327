@@ -26,6 +26,7 @@ import org.obd.metrics.connection.AdapterConnection;
 import org.obd.metrics.pid.PidRegistry;
 import org.obd.metrics.pid.Urls;
 import org.obd.metrics.statistics.StatisticsRegistry;
+import org.obd.metrics.units.UnitsRegistry;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -36,7 +37,7 @@ abstract class AbstractWorkflow implements Workflow {
 
 	protected PidSpec pidSpec;
 	protected Producer commandProducer;
-
+	protected final UnitsRegistry unitsRegistry;
 	protected final CommandsBuffer commandsBuffer = CommandsBuffer.instance();
 
 	@Getter
@@ -64,7 +65,7 @@ abstract class AbstractWorkflow implements Workflow {
 		this.pidSpec = pidSpec;
 		this.equationEngine = equationEngine;
 		this.replyObserver = observer;
-
+		this.unitsRegistry = UnitsRegistry.instance();
 		this.lifecycle = getLifecycle(statusObserver);
 
 		List<InputStream> resources = Arrays.asList();
@@ -91,7 +92,7 @@ abstract class AbstractWorkflow implements Workflow {
 			var executorService = Executors.newFixedThreadPool(2);
 
 			try {
-
+				
 				init(adjustements);
 
 				log.info("Starting the workflow: {}. Batch enabled: {},generator: {}, selected PID's: {}",
@@ -135,7 +136,11 @@ abstract class AbstractWorkflow implements Workflow {
 	}
 
 	protected CodecRegistry getCodecRegistry(GeneratorSpec generatorSpec) {
-		return CodecRegistry.builder().equationEngine(getEquationEngine(equationEngine)).generatorSpec(generatorSpec)
+		return CodecRegistry
+				.builder()
+				.unitsRegistry(unitsRegistry)
+				.equationEngine(getEquationEngine(equationEngine))
+				.generatorSpec(generatorSpec)
 		        .build();
 	}
 

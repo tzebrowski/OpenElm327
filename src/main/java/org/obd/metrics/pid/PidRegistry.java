@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
+import org.obd.metrics.units.UnitsRegistry;
+
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Singular;
@@ -23,8 +25,8 @@ public interface PidRegistry {
 	Collection<PidDefinition> findAll();
 
 	@Builder
-	static PidRegistry build(@NonNull @Singular("source") List<InputStream> sources) {
-		var instance = new DefaultRegistry();
+	static PidRegistry build(@NonNull @Singular("source") List<InputStream> sources, UnitsRegistry unitsRegistry) {
+		var instance = new DefaultRegistry(unitsRegistry);
 		sources.forEach(inputStream -> {
 			instance.load(inputStream);
 		});

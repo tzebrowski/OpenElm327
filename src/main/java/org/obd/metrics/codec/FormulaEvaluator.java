@@ -8,10 +8,12 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import org.obd.metrics.pid.PidDefinition;
+import org.obd.metrics.units.UnitsRegistry;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,30 +26,31 @@ final class FormulaEvaluator implements Codec<Number> {
 	        .collect(Collectors.toList()); // A - Z
 
 	private final ScriptEngine jsEngine;
+	private final UnitsRegistry unitsRegistry;
 
 	@Builder
-	public static FormulaEvaluator build(String engine) {
-		return new FormulaEvaluator(new ScriptEngineManager().getEngineByName(engine));
+	public static FormulaEvaluator build(String engine, UnitsRegistry unitsRegistry) {
+		return new FormulaEvaluator(new ScriptEngineManager().getEngineByName(engine), unitsRegistry);
 	}
 
 	@Override
 	public Number decode(PidDefinition pid, String rawData) {
 
 		log.debug("Found PID definition: {}", pid);
-		if (pid.getFormula() == null || pid.getFormula().length() == 0) {
+		if (getPidFormula(pid) == null || getPidFormula(pid).length() == 0) {
 			log.debug("No formula find in {} for: {}", pid, rawData);
 		} else {
 			if (decoder.isSuccessAnswerCode(pid, rawData)) {
 				try {
 					updateFormulaParameters(rawData, pid);
 
-					var eval = jsEngine.eval(pid.getFormula());
+					var eval = jsEngine.eval(getPidFormula(pid));
 					var value = Number.class.cast(eval);
 					return convert(pid, value);
 
 				} catch (Throwable e) {
-					log.trace("Failed to evaluate the formula {}", pid.getFormula(), e);
-					log.debug("Failed to evaluate the formula {}", pid.getFormula());
+					log.trace("Failed to evaluate the formula {}", getPidFormula(pid), e);
+					log.debug("Failed to evaluate the formula {}", getPidFormula(pid));
 				}
 			} else {
 				log.debug("Answer code is incorrect for: {}", rawData);
@@ -55,6 +58,11 @@ final class FormulaEvaluator implements Codec<Number> {
 		}
 
 		return null;
+	}
+
+	private String getPidFormula(PidDefinition pid) {
+		
+		return pid.getFormula();
 	}
 
 	private Number convert(PidDefinition pid, Number value) {
