@@ -1,0 +1,20 @@
+[
+    {
+        "id": "1",
+        "name": "Temperature",
+        "converters": [
+            {
+                "from": "C",
+                "to": "F",
+                "label": "Celcious to Fahrenheit",
+                "conversionRule": "(X * 1.8) + 32"
+            },
+            {
+                "from": "C",
+                "to": "K",
+                "label": "Celcious to Kelvin",
+                "conversionRule": "X + 273.15"
+            }
+        ]
+    }
+]

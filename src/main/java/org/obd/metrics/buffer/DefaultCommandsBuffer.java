@@ -6,9 +6,12 @@ import java.util.concurrent.LinkedBlockingDeque;
 import org.obd.metrics.command.Command;
 import org.obd.metrics.command.group.CommandGroup;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 final class DefaultCommandsBuffer implements CommandsBuffer {
 
 	// no synchronization need, already synchronized

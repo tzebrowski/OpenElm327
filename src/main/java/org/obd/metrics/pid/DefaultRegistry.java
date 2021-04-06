@@ -74,7 +74,7 @@ final class DefaultRegistry implements PidRegistry {
 				this.mode = readValue[0].getMode();
 			}
 		} catch (IOException e) {
-			log.error("Failed to load definitin file", e);
+			log.error("Failed to load pids configuration", e);
 		}
 	}
 
