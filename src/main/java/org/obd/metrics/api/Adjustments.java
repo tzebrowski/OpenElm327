@@ -1,5 +1,8 @@
 package org.obd.metrics.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.obd.metrics.codec.GeneratorSpec;
 
 import lombok.Builder;
@@ -16,6 +19,10 @@ import lombok.Getter;
 public final class Adjustments {
 
 	public static Adjustments DEFAULT = Adjustments.builder().build();
+
+	@Getter
+	@Default
+	private List<ConversionUnits> units = new ArrayList<>();
 
 	@Getter
 	@Default

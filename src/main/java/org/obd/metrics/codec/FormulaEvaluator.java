@@ -13,7 +13,6 @@ import org.obd.metrics.units.UnitsRegistry;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -61,7 +60,10 @@ final class FormulaEvaluator implements Codec<Number> {
 	}
 
 	private String getPidFormula(PidDefinition pid) {
-		
+		var units = unitsRegistry.findById(pid.getUnitsId());
+		if (units.isPresent()) {
+			
+		}
 		return pid.getFormula();
 	}
 

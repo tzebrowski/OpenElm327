@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(of = { "id" })
-public final class Unit {
+public final class Units {
 
 	private long id;
 	private String name;

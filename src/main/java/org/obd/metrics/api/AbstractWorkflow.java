@@ -19,7 +19,6 @@ import org.obd.metrics.Reply;
 import org.obd.metrics.ReplyObserver;
 import org.obd.metrics.buffer.CommandsBuffer;
 import org.obd.metrics.codec.CodecRegistry;
-import org.obd.metrics.codec.GeneratorSpec;
 import org.obd.metrics.command.obd.ObdCommand;
 import org.obd.metrics.command.process.QuitCommand;
 import org.obd.metrics.connection.AdapterConnection;
@@ -114,7 +113,7 @@ abstract class AbstractWorkflow implements Workflow {
 				        .observer(replyObserver)
 				        .observer((ReplyObserver<Reply<?>>) statisticsRegistry)
 				        .pids(pidRegistry)
-				        .codecs(getCodecRegistry(adjustements.getGenerator()))
+				        .codecs(getCodecRegistry(adjustements))
 				        .lifecycle(lifecycle).build();
 
 				executorService.invokeAll(Arrays.asList(commandLoop, commandProducer));
@@ -135,12 +134,12 @@ abstract class AbstractWorkflow implements Workflow {
 		return new Producer(statisticsRegistry, commandsBuffer, supplier, adjustements);
 	}
 
-	protected CodecRegistry getCodecRegistry(GeneratorSpec generatorSpec) {
+	protected CodecRegistry getCodecRegistry(Adjustments adjusteAdjustments) {
 		return CodecRegistry
 				.builder()
 				.unitsRegistry(unitsRegistry)
 				.equationEngine(getEquationEngine(equationEngine))
-				.generatorSpec(generatorSpec)
+				.generatorSpec(adjusteAdjustments.getGenerator())
 		        .build();
 	}
 

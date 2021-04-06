@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,17 +16,25 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 final class DefaultUnitRegistry implements UnitsRegistry {
 
-	private final Map<Object, Unit> units = new HashMap<>();
+	private final Map<Object, Units> units = new HashMap<>();
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
-	public Unit findById(Long id) {
-		return units.get(id);
+	public Optional<Units> findById(Long id) {
+		if (null == id) {
+			return Optional.empty();
+		} else {
+			return Optional.ofNullable(units.get(id));
+		}
 	}
 
 	@Override
-	public Unit findByName(String name) {
-		return units.get(name);
+	public Optional<Units> findByName(String name) {
+		if (null == name) {
+			return Optional.empty();
+		} else {
+			return Optional.ofNullable(units.get(name));
+		}
 	}
 
 	void load(final InputStream inputStream) {
@@ -33,7 +42,7 @@ final class DefaultUnitRegistry implements UnitsRegistry {
 			if (null == inputStream) {
 				log.error("Was not able to load units configuration");
 			} else {
-				var readValue = objectMapper.readValue(inputStream, Unit[].class);
+				var readValue = objectMapper.readValue(inputStream, Units[].class);
 				log.info("Load {} pid definitions", readValue.length);
 				for (var unit : readValue) {
 					units.put(unit.getName(), unit);
