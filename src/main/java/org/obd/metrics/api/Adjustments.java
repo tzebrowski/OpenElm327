@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.obd.metrics.codec.GeneratorSpec;
+import org.obd.metrics.codec.TargetUnit;
 
 import lombok.Builder;
 import lombok.Builder.Default;
@@ -22,7 +23,7 @@ public final class Adjustments {
 
 	@Getter
 	@Default
-	private List<ConversionUnits> units = new ArrayList<>();
+	private List<TargetUnit> units = new ArrayList<>();
 
 	@Getter
 	@Default

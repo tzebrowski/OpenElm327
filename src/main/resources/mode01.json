@@ -65,8 +65,7 @@
         "min": -30,
         "max": 140,
         "units": "C",
-        "formula": "A-40",
-        "unitsId": 1
+        "formula": "A-40"
     },
     {
         "id": "7",

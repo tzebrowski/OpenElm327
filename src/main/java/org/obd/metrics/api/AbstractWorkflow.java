@@ -91,7 +91,7 @@ abstract class AbstractWorkflow implements Workflow {
 			var executorService = Executors.newFixedThreadPool(2);
 
 			try {
-				
+
 				init(adjustements);
 
 				log.info("Starting the workflow: {}. Batch enabled: {},generator: {}, selected PID's: {}",
@@ -136,10 +136,9 @@ abstract class AbstractWorkflow implements Workflow {
 
 	protected CodecRegistry getCodecRegistry(Adjustments adjusteAdjustments) {
 		return CodecRegistry
-				.builder()
-				.unitsRegistry(unitsRegistry)
-				.equationEngine(getEquationEngine(equationEngine))
-				.generatorSpec(adjusteAdjustments.getGenerator())
+		        .builder()
+		        .equationEngine(getEquationEngine(equationEngine))
+		        .generatorSpec(adjusteAdjustments.getGenerator())
 		        .build();
 	}
 

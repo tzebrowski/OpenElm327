@@ -8,15 +8,14 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import org.obd.metrics.pid.PidDefinition;
-import org.obd.metrics.units.UnitsRegistry;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 final class FormulaEvaluator implements Codec<Number> {
 
 	private final MetricsDecoder decoder = new MetricsDecoder();
@@ -25,11 +24,10 @@ final class FormulaEvaluator implements Codec<Number> {
 	        .collect(Collectors.toList()); // A - Z
 
 	private final ScriptEngine jsEngine;
-	private final UnitsRegistry unitsRegistry;
 
 	@Builder
-	public static FormulaEvaluator build(String engine, UnitsRegistry unitsRegistry) {
-		return new FormulaEvaluator(new ScriptEngineManager().getEngineByName(engine), unitsRegistry);
+	public static FormulaEvaluator build(String engine) {
+		return new FormulaEvaluator(new ScriptEngineManager().getEngineByName(engine));
 	}
 
 	@Override
@@ -44,8 +42,7 @@ final class FormulaEvaluator implements Codec<Number> {
 					updateFormulaParameters(rawData, pid);
 
 					var eval = jsEngine.eval(getPidFormula(pid));
-					var value = Number.class.cast(eval);
-					return convert(pid, value);
+					return TypesConverter.convert(pid, eval);
 
 				} catch (Throwable e) {
 					log.trace("Failed to evaluate the formula {}", getPidFormula(pid), e);
@@ -60,28 +57,7 @@ final class FormulaEvaluator implements Codec<Number> {
 	}
 
 	private String getPidFormula(PidDefinition pid) {
-		var units = unitsRegistry.findById(pid.getUnitsId());
-		if (units.isPresent()) {
-			
-		}
 		return pid.getFormula();
-	}
-
-	private Number convert(PidDefinition pid, Number value) {
-		if (pid.getType() == null) {
-			return value.doubleValue();
-		} else {
-			switch (pid.getType()) {
-			case INT:
-				return value.intValue();
-			case DOUBLE:
-				return value.doubleValue();
-			case SHORT:
-				return value.shortValue();
-			default:
-				return value;
-			}
-		}
 	}
 
 	private void updateFormulaParameters(String rawData, PidDefinition pid) {

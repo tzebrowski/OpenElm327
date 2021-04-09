@@ -36,15 +36,15 @@ final class CommandExecutor {
 			log.debug("Recieve device error: {}", data);
 			lifecycle.onError(data, null);
 		} else if (command instanceof Batchable) {
-			((Batchable) command).decode(data).forEach(this::decodeAndPublishObdMetric);
+			((Batchable) command).decode(data).forEach(this::decodeConvertAndPublish);
 		} else if (command instanceof ObdCommand) {
-			decodeAndPublishObdMetric((ObdCommand) command, data);
+			decodeConvertAndPublish((ObdCommand) command, data);
 		} else {
 			publisher.onNext(Reply.builder().command(command).raw(data).build());
 		}
 	}
 
-	private void decodeAndPublishObdMetric(final ObdCommand command, final String data) {
+	private void decodeConvertAndPublish(final ObdCommand command, final String data) {
 		var codec = codecRegistry.findCodec(command);
 		var allVariants = pids.findAllBy(command.getPid().getPid());
 		allVariants.forEach(pDef -> {

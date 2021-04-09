@@ -53,5 +53,4 @@ final class DefaultUnitRegistry implements UnitsRegistry {
 			log.error("Failed to load units configuration", e);
 		}
 	}
-
 }

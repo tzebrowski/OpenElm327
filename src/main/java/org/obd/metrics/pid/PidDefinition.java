@@ -61,11 +61,6 @@ public class PidDefinition implements Comparable<PidDefinition> {
 	@Getter
 	private Integer priority = 5;
 
-	
-	@Getter
-	private Long unitsId;
-
-	
 	@Override
 	public int compareTo(PidDefinition o) {
 		return o.priority.compareTo(this.priority);
